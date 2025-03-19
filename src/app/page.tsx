@@ -9,31 +9,38 @@ export default async function Home({
 }: {
   searchParams: Promise<URLSearchParams>
 }) {
-  // construct the current server URL
+  // Check for a Vercel Deployment Protection bypass header, query parameter, or environment variable
+  // See: https://vercel.com/docs/deployment-protection/methods-to-bypass-deployment-protection/protection-bypass-automation
   const headersList = await headers()
-  const host = headersList.get("host")
-  const proto = headersList.get("x-forwarded-proto")
-  const vercelProtection = headersList.get(VERCEL_PROTECTION_HEADER)
   const params = new URLSearchParams(await searchParams)
-  const protection = (() => {
-    if (vercelProtection) {
-      return vercelProtection
-    }
-    if (params.has(VERCEL_PROTECTION_HEADER)) {
-      return params.get(VERCEL_PROTECTION_HEADER)
-    }
+  const vercelProtectionBypassHeader = headersList.get(VERCEL_PROTECTION_HEADER)
+  const vercelProtectionBypassQueryParam = params.get(VERCEL_PROTECTION_HEADER)
+  const vercelProtectionBypassEnvVar = process.env.VERCEL_AUTOMATION_BYPASS_SECRET
 
+  // IIFE to check for Vercel Deployment Protection bypass
+  const getBypass = (() => {
+    if (vercelProtectionBypassHeader) {
+      return vercelProtectionBypassHeader
+    }
+    if (vercelProtectionBypassQueryParam) {
+      return vercelProtectionBypassQueryParam
+    }
+    if (vercelProtectionBypassEnvVar) {
+      return vercelProtectionBypassEnvVar
+    }
     return null
   })()
-  const apiURL = `${proto}://${host}/api/greetings`
 
+  // Fetch greetings, bypassing Vercel Deployment Protection if necessary and able
+  const host = headersList.get("host")
+  const protocol = headersList.get("x-forwarded-proto")
+  const apiURL = `${protocol}://${host}/api/greetings`
   const response = await fetch(apiURL, {
-    ...(protection
-      ? { headers: { [VERCEL_PROTECTION_HEADER]: protection } }
+    ...(getBypass
+      ? { headers: { [VERCEL_PROTECTION_HEADER]: getBypass } }
       : {})
   })
   const greetings = await response.json()
-  // select random entry in greetings array
   const greeting = greetings[Math.floor(Math.random() * greetings.length)]
 
   function Greeting() {
@@ -47,7 +54,7 @@ export default async function Home({
   function SystemEnvVarsNotExposed() {
     return (
       <>
-        <p className="border border-solid border-blue-500 dark:border-blue-400 rounded-md p-4 text-blue-500 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20">
+        <p className="border border-solid border-blue-500 dark:border-blue-400 rounded-md p-4 text-blue-500 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 max-w-prose">
           Almost there! Please check the README for instructions on how to expose your {" "}
           <Link
             className="text-blue-700 dark:text-blue-500 underline"
@@ -57,6 +64,18 @@ export default async function Home({
             Vercel system environment variables
           </Link>
           .
+        </p>
+      </>
+    )
+  }
+
+  function NoProtectionBypass() {
+    return (
+      <>
+        <p className="border border-solid border-blue-500 dark:border-blue-400 rounded-md p-4 text-blue-500 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 max-w-prose">
+          Almost there!
+          It looks like you have Vercel Deployment Protection enabled, but no bypass set.
+          Please check the README for instructions on how to provide one.
         </p>
       </>
     )
@@ -133,6 +152,13 @@ export default async function Home({
           // See: https://vercel.com/docs/environment-variables/system-environment-variables
           (process.env.NODE_ENV === "production" && !process.env.VERCEL)
             && <SystemEnvVarsNotExposed />
+        }
+
+        {
+          // Warn if Vercel Deployment Protection is enabled but no bypass is set
+          // See: https://vercel.com/docs/deployment-protection/methods-to-bypass-deployment-protection/protection-bypass-automation
+          (process.env.VERCEL && !getBypass)
+            && <NoProtectionBypass />
         }
 
       </main>
