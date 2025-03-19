@@ -1,29 +1,27 @@
-import type { Metadata } from "next";
-import { Inter } from 'next/font/google'
-import "./globals.css";
+import type { Metadata } from "next"
+import { Inter } from "next/font/google"
+import "./globals.css"
 
 const inter = Inter({
-  subsets: ['latin'],
-  display: 'swap',
-});
+  subsets: ["latin"],
+  display: "swap"
+})
 
 export const metadata: Metadata = {
-  title: "Next / Checkly Starter Template",
-  description: "A simple Next app with a Checkly integration",
-};
+  title: "Next.js & Checkly Starter Template",
+  description: "A simple Next.js app with a Checkly integration"
+}
 
 export default function RootLayout({
-  children,
+  children
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${inter.className} antialiased`}
-      >
+      <body className={`${inter.className} antialiased`}>
         {children}
       </body>
     </html>
-  );
+  )
 }

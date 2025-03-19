@@ -1,18 +1,18 @@
-import Link from "next/link";
-import Image from "next/image";
-import { headers } from 'next/headers';
+import Link from "next/link"
+import Image from "next/image"
+import { headers } from "next/headers"
 
 const VERCEL_PROTECTION_HEADER = "x-vercel-protection-bypass"
 
 export default async function Home({
-  searchParams,
+  searchParams
 }: {
   searchParams: Promise<URLSearchParams>
 }) {
   // construct the current server URL
   const headersList = await headers()
-  const host = headersList.get('host')
-  const proto = headersList.get('x-forwarded-proto')
+  const host = headersList.get("host")
+  const proto = headersList.get("x-forwarded-proto")
   const vercelProtection = headersList.get(VERCEL_PROTECTION_HEADER)
   const params = new URLSearchParams(await searchParams)
   const protection = (() => {
@@ -24,13 +24,13 @@ export default async function Home({
     }
 
     return null
-  })();
+  })()
   const apiURL = `${proto}://${host}/api/greetings`
 
   const response = await fetch(apiURL, {
     ...(protection
       ? { headers: { [VERCEL_PROTECTION_HEADER]: protection } }
-      : {}),
+      : {})
   })
   const greetings = await response.json()
   // select random entry in greetings array
@@ -122,5 +122,5 @@ export default async function Home({
         </Link>
       </footer>
     </div>
-  );
+  )
 }
