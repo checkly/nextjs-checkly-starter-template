@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Image from "next/image";
 import { headers } from 'next/headers';
 
@@ -39,7 +40,7 @@ export default async function Home({
     <div className="grid grid-rows-[20px_1fr_20px] justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
         <div>
-          <a href="https://checklyhq.com" target="_blank">
+          <Link href="https://checklyhq.com" target="_blank">
           <Image
             src="https://www.checklyhq.com/images/racoon_logo.svg"
             alt="Checkly logomark"
@@ -47,7 +48,7 @@ export default async function Home({
             height={40}
             className="mb-4"
           />
-          </a>
+          </Link>
           <div className="mb-4 text-gray-500 dark:text-gray-400">
             <span className="capitalize">{greeting.text}</span>, this is the
           </div>
@@ -59,34 +60,52 @@ export default async function Home({
           This is a simple Next.js app with a Checkly integration. In a nutshell, it does three things:
         </p>
         <ol className="list-decimal text-left list-inside">
-          <li className="mb-2">The app fetches data from the <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">/api/greetings</code> endpoint and displays it on this landing
-            page.
+          <li className="mb-2">
+            The app fetches data from the
+            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
+              /api/greetings
+            </code>
+            endpoint and displays it on this landing page.
           </li>
-          <li className="mb-2">Checkly verifies if the page loads — using Playwright — and if the API responds correctly.</li>
-          <li>Checkly checks can run after deployment and deployed as monitors using the Checkly CLI.</li>
+          <li className="mb-2">
+            Checkly verifies if the page loads — using Playwright — and if the API responds correctly.
+          </li>
+          <li>
+            Checkly checks can run after deployment and deployed as monitors using the Checkly CLI.
+          </li>
         </ol>
-        <p>To get going, <a className="text-blue-700 underline" href="https://github.com/checkly/nextjs-checkly-starter-template" target="_blank">go to the repo</a> and follow the instructions in the README.md file.</p>
+        <p>
+          To get going,
+          <Link
+            className="text-blue-700 underline"
+            href="https://github.com/checkly/nextjs-checkly-starter-template"
+            target="_blank"
+          >
+            go to the repo
+          </Link>
+          and follow the instructions in the README.md file.
+        </p>
         <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
+          <Link
             className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
             href="https://github.com/checkly/nextjs-checkly-starter-template"
             target="_blank"
             rel="noopener noreferrer"
           >
             Go to the GitHub repo
-          </a>
+          </Link>
         </div>
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
+        <Link
           className="flex items-center gap-2 hover:underline hover:underline-offset-4"
           href="https://github.com/checkly/nextjs-checkly-starter-template"
           target="_blank"
           rel="noopener noreferrer"
         >
           GitHub Repo
-        </a>
-        <a
+        </Link>
+        <Link
           className="flex items-center gap-2 hover:underline hover:underline-offset-4"
           href="https://checklyhq.com"
           target="_blank"
@@ -100,7 +119,7 @@ export default async function Home({
             height={16}
           />
           Go to checklyhq.com →
-        </a>
+        </Link>
       </footer>
     </div>
   );
