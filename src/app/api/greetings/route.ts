@@ -1,3 +1,8 @@
+export type Greeting = {
+  id: number
+  text: string
+}
+
 export async function GET() {
   return Response.json(
       [

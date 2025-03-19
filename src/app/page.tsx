@@ -1,6 +1,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { headers } from "next/headers"
+import { type Greeting } from "@/app/api/greetings/route"
 
 const VERCEL_PROTECTION_HEADER = "x-vercel-protection-bypass"
 
@@ -31,7 +32,7 @@ export default async function Home({
     return null
   })()
 
-  // Fetch greetings, bypassing Vercel Deployment Protection if necessary and able
+  // Construct endpoint to fetch greetings from, bypassing Vercel Deployment Protection if necessary and able
   const host = headersList.get("host")
   const protocol = headersList.get("x-forwarded-proto")
   const apiURL = `${protocol}://${host}/api/greetings`
@@ -40,10 +41,17 @@ export default async function Home({
       ? { headers: { [VERCEL_PROTECTION_HEADER]: getBypass } }
       : {})
   })
-  const greetings = await response.json()
-  const greeting = greetings[Math.floor(Math.random() * greetings.length)]
 
-  function Greeting() {
+  async function fetchGreeting() {
+    if (!response.ok) {
+      return null
+    }
+    const greetings = await response.json()
+    const greeting = greetings[Math.floor(Math.random() * greetings.length)]
+    return greeting as Greeting
+  }
+
+  function Greeting({ greeting }: { greeting: Greeting }) {
     return (
       <div className="mb-4 text-gray-500 dark:text-gray-400">
         <span className="capitalize">{greeting.text}</span>, this is the
@@ -127,6 +135,7 @@ export default async function Home({
     )
   }
 
+  const greeting = await fetchGreeting()
   return (
     <div className="grid grid-rows-[20px_1fr_20px] justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
@@ -140,24 +149,35 @@ export default async function Home({
               className="mb-4"
             />
           </Link>
-          <Greeting />
+
+          {
+            // Display greeting if available
+            greeting && <Greeting greeting={greeting} />
+          }
+
           <h1 className="text-4xl text-left sm:text-5xl font-bold">
             Next.js & Checkly starter template
           </h1>
         </div>
-        <Success />
+
+        {
+          // Display success message if greeting is available
+          greeting && <Success />
+        }
 
         {
           // Warn if Vercel deployment does not have access to system environment variables
           // See: https://vercel.com/docs/environment-variables/system-environment-variables
-          (process.env.NODE_ENV === "production" && !process.env.VERCEL)
+          // Ignore if greeting is available regardless (exposing to deployments could be disabled, or user could be running locally)
+          (process.env.NODE_ENV === "production" && !greeting && !process.env.VERCEL)
             && <SystemEnvVarsNotExposed />
         }
 
         {
           // Warn if Vercel Deployment Protection is enabled but no bypass is set
           // See: https://vercel.com/docs/deployment-protection/methods-to-bypass-deployment-protection/protection-bypass-automation
-          (process.env.VERCEL && !getBypass)
+          // Ignore if greeting is available regardless (Vercel Deployment Protection could be disabled, or user could be running locally)
+          (process.env.VERCEL && !greeting && !getBypass)
             && <NoProtectionBypass />
         }
 
