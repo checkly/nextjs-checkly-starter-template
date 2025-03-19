@@ -36,36 +36,27 @@ export default async function Home({
   // select random entry in greetings array
   const greeting = greetings[Math.floor(Math.random() * greetings.length)]
 
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <div>
-          <Link href="https://checklyhq.com" target="_blank">
-          <Image
-            src="https://www.checklyhq.com/images/racoon_logo.svg"
-            alt="Checkly logomark"
-            width={40}
-            height={40}
-            className="mb-4"
-          />
-          </Link>
-          <div className="mb-4 text-gray-500 dark:text-gray-400">
-            <span className="capitalize">{greeting.text}</span>, this is the
-          </div>
-          <h1 className="text-4xl text-left sm:text-5xl font-bold">
-            Next.js & Checkly starter template
-          </h1>
-        </div>
+  function Greeting() {
+    return (
+      <div className="mb-4 text-gray-500 dark:text-gray-400">
+        <span className="capitalize">{greeting.text}</span>, this is the
+      </div>
+    )
+  }
+
+  function Success() {
+    return (
+      <>
         <p>
           This is a simple Next.js app with a Checkly integration. In a nutshell, it does three things:
         </p>
         <ol className="list-decimal text-left list-inside">
           <li className="mb-2">
-            The app fetches data from the
+            The app fetches data from the {" "}
             <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
               /api/greetings
             </code>
-            endpoint and displays it on this landing page.
+            {" "} endpoint and displays it on this landing page.
           </li>
           <li className="mb-2">
             Checkly verifies if the page loads — using Playwright — and if the API responds correctly.
@@ -75,15 +66,15 @@ export default async function Home({
           </li>
         </ol>
         <p>
-          To get going,
+          To get going, {" "}
           <Link
-            className="text-blue-700 underline"
+            className="text-blue-700 dark:text-blue-500 underline"
             href="https://github.com/checkly/nextjs-checkly-starter-template"
             target="_blank"
           >
             go to the repo
           </Link>
-          and follow the instructions in the README.md file.
+          {" "} and follow the instructions in the README.md file.
         </p>
         <div className="flex gap-4 items-center flex-col sm:flex-row">
           <Link
@@ -95,6 +86,29 @@ export default async function Home({
             Go to the GitHub repo
           </Link>
         </div>
+      </>
+    )
+  }
+
+  return (
+    <div className="grid grid-rows-[20px_1fr_20px] justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
+      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
+        <div>
+          <Link href="https://checklyhq.com" target="_blank">
+            <Image
+              src="https://www.checklyhq.com/images/racoon_logo.svg"
+              alt="Checkly logomark"
+              width={40}
+              height={40}
+              className="mb-4"
+            />
+          </Link>
+          <Greeting />
+          <h1 className="text-4xl text-left sm:text-5xl font-bold">
+            Next.js & Checkly starter template
+          </h1>
+        </div>
+        <Success />
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
         <Link
