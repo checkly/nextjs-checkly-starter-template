@@ -44,6 +44,24 @@ export default async function Home({
     )
   }
 
+  function SystemEnvVarsNotExposed() {
+    return (
+      <>
+        <p className="border border-solid border-blue-500 dark:border-blue-400 rounded-md p-4 text-blue-500 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20">
+          Almost there! Please check the README for instructions on how to expose your {" "}
+          <Link
+            className="text-blue-700 dark:text-blue-500 underline"
+            href="https://vercel.com/docs/environment-variables/system-environment-variables"
+            target="_blank"
+          >
+            Vercel system environment variables
+          </Link>
+          .
+        </p>
+      </>
+    )
+  }
+
   function Success() {
     return (
       <>
@@ -109,6 +127,14 @@ export default async function Home({
           </h1>
         </div>
         <Success />
+
+        {
+          // Warn if Vercel deployment does not have access to system environment variables
+          // See: https://vercel.com/docs/environment-variables/system-environment-variables
+          (process.env.NODE_ENV === "production" && !process.env.VERCEL)
+            && <SystemEnvVarsNotExposed />
+        }
+
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
         <Link
