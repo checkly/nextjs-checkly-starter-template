@@ -34,6 +34,7 @@ export default async function Home({
   const greetings = await response.json()
   // select random entry in greetings array
   const greeting = greetings[Math.floor(Math.random() * greetings.length)]
+
   return (
     <div className="grid grid-rows-[20px_1fr_20px] justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
@@ -47,10 +48,10 @@ export default async function Home({
             className="mb-4"
           />
           </a>
-          <div className="text-gray-300 mb-4">
+          <div className="mb-4 text-gray-500 dark:text-gray-400">
             <span className="capitalize">{greeting.text}</span>, this is the
           </div>
-          <h1 className="text-4xl text-left sm:text-5xl font-bold text-white">
+          <h1 className="text-4xl text-left sm:text-5xl font-bold">
             Next.js & Checkly starter template
           </h1>
         </div>
