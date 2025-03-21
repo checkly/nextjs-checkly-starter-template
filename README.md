@@ -89,8 +89,8 @@ You can run your Checkly checks right after any Vercel Preview Deployment, and t
 
 This example uses GitHub Actions — check out the workflow in [`.github/workflows/checkly.yml`](/.github/workflows/checkly.yml) — but you can use any other CI platform. We have [example configs for Jenkins and GitLab CI in our docs](https://checklyhq.com/docs/cicd).
 
-1. Create an API key [in **User Settings > API keys**](https://app.checklyhq.com/settings/user/api-keys).
-2. Take note of your [Checkly Account ID in **Account Settings > General**](https://app.checklyhq.com/settings/account/general).
+1. Create an API key in [**User Settings > API keys**](https://app.checklyhq.com/settings/user/api-keys).
+2. Take note of your Checkly Account ID in [**Account Settings > General**](https://app.checklyhq.com/settings/account/general).
 3. Save your API key and Account ID as secrets named `CHECKLY_API_KEY` and `CHECKLY_ACCOUNT_ID` in your GitHub Actions configuration.
 
 ![GitHub Actions Secret Page](assets/gh_actions_secrets.png)
