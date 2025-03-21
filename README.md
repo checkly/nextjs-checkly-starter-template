@@ -85,7 +85,7 @@ Great! We're all set up with testing & monitoring our Production Deployments, wh
 
 ### Running checks in CI
 
-You can run your Checkly checks right after any Vercel Preview Deployment, and then deploy your checks as monitors on Checkly. This is a powerful strategy to make sure your never ship breaking errors to Production, while at the same time surfacing any outages in your Production Deployments.
+You can run your Checkly checks right after any Vercel Preview Deployment, and then deploy your checks as monitors on Checkly. This is a powerful strategy to make sure you never ship breaking errors to Production, while at the same time surfacing any outages in your Production Deployments.
 
 This example uses GitHub Actions — check out the workflow in [`.github/workflows/checkly.yml`](/.github/workflows/checkly.yml) — but you can use any other CI platform. We have [example configs for Jenkins and GitLab CI in our docs](https://checklyhq.com/docs/cicd).
 
