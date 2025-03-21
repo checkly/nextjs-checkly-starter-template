@@ -12,6 +12,9 @@ new ApiCheck("api-check-1", {
   request: {
     url: "{{BASE_URL}}/api/greetings",
     method: "GET",
+    headers: [
+      { key: "x-vercel-protection-bypass", value: "{{VERCEL_AUTOMATION_BYPASS_SECRET}}" }
+    ],
     assertions: [
       AssertionBuilder.statusCode().equals(200),
       AssertionBuilder.jsonBody("$[0].text").notEmpty()
