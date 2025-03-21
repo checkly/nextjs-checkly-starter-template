@@ -9,13 +9,6 @@ new BrowserCheck("landing-page-check-1", {
   code: {
     entrypoint: "./landing-page.spec.ts"
   },
-  playwrightConfig: {
-    use: {
-      extraHTTPHeaders: {
-        "x-vercel-protection-bypass": process.env.VERCEL_AUTOMATION_BYPASS_SECRET || ""
-      }
-    }
-  },
   retryStrategy: RetryStrategyBuilder.exponentialStrategy({
     maxRetries: 3,
     baseBackoffSeconds: 1,
