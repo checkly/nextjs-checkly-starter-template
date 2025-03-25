@@ -1,100 +1,111 @@
 # Next.js & Checkly Starter Template
 
-This repo showcases a simple Next.js app, hosted on Vercel, that uses Checkly to run checks before and after deployment in CI.
-It includes the following features:
+This repo showcases a simple Next.js app, hosted on Vercel, that uses Checkly to run checks before and after deployment in CI. It includes the following features:
+
 1. A Next.js app that fetches data from the `/api/greetings` endpoint and displays it on the landing page.
 2. Checkly checks in the `__checks__` directory verify if the page loads and if the API responds correctly.
 3. The necessary Checkly CLI and GitHub Actions configuration to run these checks in CI.
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fcheckly%2Fnextjs-checkly-starter-template)
 
-## Quickstart
+## Getting started
 
-1. Fork this repo or click the "Use this template" button in the top right corner.
-2. Clone the repo and run `npm install`.
+There are a couple ways to use this template:
 
-    ```bash
-    git clone https://github.com/checkly/nextjs-checkly-starter-template.git
-    cd nextjs-checkly-starter-template
-    npm i
-    ```
+- Forking the repo / clicking "Use this template" in the top right corner
+- Deploying the official [Vercel template](https://vercel.com/templates/Next.js/nextjs-checkly)
 
-3. Deploy the app to Vercel. You should now have a stable, production Vercel URL for your app similar to `https://nextjs-checkly-starter-template-checkly.vercel.app/`
-4. Copy and paste that URL into the `.env` file as the `PRODUCTION_URL` value, e.g.
+Either way, get started by cloning your repo and installing dependencies:
 
-    ```
-    PRODUCTION_URL="YOUR VERCEL PRODUCTION URL"
-    ```
-   Now we know where to aim our production checks.
-5. Make sure you have a Checkly account. Just run this command and follow the instructions:
-    
-    ```bash
-    npx checkly login
-    ```
-6. Run your checks in the Checkly cloud with the following commands:
-      
-    ```bash
-    npx checkly test --env-file "./.env" --record
-    ```
-    This will run the checks in the `__checks__` directory and record them in your Checkly account as [test session](https://www.checklyhq.com/docs/testing/#test-sessions). You can now see them in the [Checkly test sessions dashboard](https://app.checklyhq.com/test-sessions).
+```bash
+git clone https://github.com/checkly/nextjs-checkly-starter-template.git # replace with your repo link
+cd nextjs-checkly-starter-template
+npm i
+```
 
+### Vercel Deployment Protection
 
-7. To deploy your checks as monitors, run the following commands:
+Before running our checks, let's make sure Vercel Deployment Protection is configured to work with Checkly. If you chose to fork or use the template on GitHub, go ahead and deploy your repo to Vercel [in the dashboard](https://vercel.com/new) or with the CLI:
 
-    ```bash
-    npx checkly env add "PRODUCTION_URL" "<YOUR VERCEL PRODUCTION URL>"
-   ```
-    This command persists the `PRODUCTION_URL` to the Checkly cloud.
+```bash
+vercel
+```
 
-    ```bash
-    npx checkly deploy
-    ```
-    This command deploys the checks in the `__checks__` directory as monitors in your Checkly account. You can now see them in the [Checkly home dashboard](https://app.checklyhq.com/).
+By default, Vercel Preview Deployments are protected and only accessible by logged-in members of your Vercel team. We want to be able to access these from our Checkly checks as well. We can bypass Vercel Deployment Protection by either:
 
+- Enabling [Protection Bypass for Automation](https://vercel.com/docs/deployment-protection/methods-to-bypass-deployment-protection/protection-bypass-automation)
+- Disabling Vercel Deployment Protection altogether for this example repo
 
-## 2. Running Checks before & after Deployment in CI
+![Disable Vercel Deployment Protection](assets/vercel_deployment_protection.png)
 
-You can run your Checkly checks right after any **Vercel Preview Deployment** and then deploy your checks as 
-monitors on Checkly. This is a powerful strategy to make sure your never ship critical breaking errors
-to **Production**, while at the same time surfacing any outages in your **Production Deployments**.
+If you choose to keep Deployment Protection on, ensure:
 
-### 2.1 Bypassing Vercel Preview Deployment Protection
+1. The **Automatically expose [System Environment Variables](https://vercel.com/docs/environment-variables/system-environment-variables)** setting (in **Project Settings > Environment Variables**) is checked; and
+2. You create a `VERCEL_AUTOMATION_BYPASS_SECRET` in **Project Settings > Deployment Protection**. Our app will automatically use this for fetching from the `/api/greetings` endpoint.
 
-By default, Vercel Preview Deployments are protected and only accessible by logged-in users. However, we want to access
-any Preview Deployment with our Playwright-powered Checkly checks. To do this, we need to bypass the protection. 
+Redeploy after applying any changes to your project settings in Vercel. Each deployment will alert you of anything it's missing on the landing page.
 
-For the sake of this example repo, you can just disable this protection in the **Settings / Deployment Protection** section
-in your Vercel project.
+## Running checks
 
-![disable deployment protection](assets/vercel_deployment_protection.png)
+### Configuring testing & monitoring for production
 
-In a real-world scenario, you would create a [Vercel protection bypass token](https://www.checklyhq.com/docs/cicd/vercel-deployment-protection/) and use that in your Checkly scripts to 
-authenticate against the Preview Deployment.
+Use the Checkly CLI to login, or [create an account](https://app.checklyhq.com/signup) if you don't already have one.
 
-### 2.2 Setting up GithHub Actions
+```bash
+npx checkly login
+```
 
-This example uses GitHub Actions. Check out the workflow in `.github/workflows/checkly.yml` but you can any other CI platform.
-We have [example configs for Jenkins and GitLab CI in our docs](https://www.checklyhq.com/docs/cicd/). 
+We have a Vercel Production URL for our app, similar to `https://nextjs-checkly-starter-template-checkly.vercel.app`. Let's add this to our Checkly environment variables:
 
+```bash
+npx checkly env add "PRODUCTION_URL" "<your Vercel Production URL>"
+```
 
-1. Create an API key [in the API keys section of your Checkly account](https://app.checklyhq.com/settings/user/api-keys)
-2. Take a note of your [Checkly Account ID in the General section of your Checkly account](https://app.checklyhq.com/settings/account/general) 
-3. Save your API key and Account ID as `CHECKLY_API_KEY` and `CHECKLY_ACCOUNT_ID` as **secrets** in your GitHub Actions configuration.
+Now would be a good time to also add your Vercel Deployment Protection bypass secret, if you created one earlier:
+
+```bash
+npx checkly env add --secret "VERCEL_AUTOMATION_BYPASS_SECRET" "<secret>"
+```
+
+We're ready to go! Let's run our checks in the `__checks__` directory in the Checkly cloud, and record them as a [test session](https://checklyhq.com/docs/testing/#test-sessions):
+
+```bash
+npx checkly test --record
+```
+
+Check it out in the [Checkly test sessions dashboard](https://app.checklyhq.com/test-sessions).
+
+You can also deploy the checks as monitors:
+
+```bash
+npx checkly deploy
+```
+
+Great! We're all set up with testing & monitoring our Production Deployments, which you can check out in the [Checkly home dashboard](https://app.checklyhq.com). Let's do the same for our Vercel Preview environment.
+
+### Running checks in CI
+
+You can run your Checkly checks right after any Vercel Preview Deployment, and then deploy your checks as monitors on Checkly. This is a powerful strategy to make sure you never ship breaking errors to Production, while at the same time surfacing any outages in your Production Deployments.
+
+This example uses GitHub Actions — check out the workflow in [`.github/workflows/checkly.yml`](/.github/workflows/checkly.yml) — but you can use any other CI platform. We have [example configs for Jenkins and GitLab CI in our docs](https://checklyhq.com/docs/cicd).
+
+1. Create an API key in [**User Settings > API keys**](https://app.checklyhq.com/settings/user/api-keys).
+2. Take note of your Checkly Account ID in [**Account Settings > General**](https://app.checklyhq.com/settings/account/general).
+3. Save your API key and Account ID as secrets named `CHECKLY_API_KEY` and `CHECKLY_ACCOUNT_ID` in your GitHub Actions configuration.
 
 ![GitHub Actions Secret Page](assets/gh_actions_secrets.png)
 
 Now, on every deployment webhook that GitHub receives from Vercel, the GitHub Actions workflow will run the checks in the `__checks__` directory.
 
-- A markdown formatted report will be posted as a comment in the GitHub Actions summary.
-- Preview Deployments are tested against the generated preview deployment URL and recorded as test sessions in Checkly.
-- Production Deployments are tested against the production URL and deployed as monitors in Checkly if all checks pass. 
+- A Markdown-formatted report will be posted as a comment in the GitHub Actions summary.
+- Preview Deployments are tested against the generated Preview Deployment URL, and recorded as test sessions in Checkly.
+- Production Deployments are tested against the Production URL, and deployed as monitors in Checkly if all checks pass.
 
-Links:
-- [Checkly docs on Test Sessions](https://www.checklyhq.com/docs/testing/#test-sessions)
-- [Checkly docs on GitHub Actions integration](https://www.checklyhq.com/docs/cicd/github-actions/)
-- [Vercel docs on running tests](https://vercel.com/guides/how-can-i-run-end-to-end-tests-after-my-vercel-preview-deployment)
+That's it for this example! If you have questions or feedback, please drop us a note in our [Slack community](https://checklyhq.com/slack).
 
-## Notes
+## Further reading
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app)
-and edited where needed.
+- Official [Checkly integration from the Vercel Marketplace](https://vercel.com/integrations/checkly)
+- Checkly docs on [integrating with Vercel](https://checklyhq.com/docs/cicd/vercel)
+- Checkly docs on [integrating with GitHub Actions](https://checklyhq.com/docs/cicd/github-actions)
+- Vercel docs on [running tests](https://vercel.com/guides/how-can-i-run-end-to-end-tests-after-my-vercel-preview-deployment)
